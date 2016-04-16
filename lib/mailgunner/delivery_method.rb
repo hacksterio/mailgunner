@@ -14,7 +14,7 @@ module Mailgunner
     def deliver!(mail)
       check_delivery_params(mail)
 
-      message = Mailgunner::Message.new(mail)
+      message = Message.new(mail)
       @client.send_message(message.to_json)
     end
   end

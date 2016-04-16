@@ -2,7 +2,7 @@ require 'net/http'
 require 'json'
 require 'cgi'
 require 'mailgunner/version'
-require 'mailgunner/message' if defined?(Mail)
+require 'mailgunner/message'
 require 'mailgunner/delivery_method' if defined?(Mail)
 require 'mailgunner/railtie' if defined?(Rails)
 
