@@ -7,6 +7,7 @@ module Mailgunner
     attr_accessor :settings
 
     def initialize(values)
+      @settings = values
       @client = Client.new(values)
     end
 
