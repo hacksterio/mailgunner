@@ -54,6 +54,10 @@ module Mailgunner
       get_value(:recipient_variables)
     end
 
+    def reply_to
+      mail[:reply_to].formatted.first
+    end
+
     def subject
       mail.subject
     end
@@ -92,6 +96,7 @@ module Mailgunner
         subject: subject,
         text: text,
         html: html,
+        'h:Reply-To' => reply_to,
         'o:tag' => tags,
         'o:tracking-clicks' => track_clicks,
         'o:tracking-opens' => track_opens,
