@@ -32,12 +32,16 @@ module Mailgunner
     #   end
     # end
 
-    def cc
-      hash_addresses(mail['cc'])
-    end
-
     def bcc
       hash_addresses(mail['bcc'])
+    end
+
+    def campaign_id
+      return_string_value(:campaign_id)
+    end
+
+    def cc
+      hash_addresses(mail['cc'])
     end
 
     # Returns a formatted address
@@ -101,6 +105,7 @@ module Mailgunner
         'o:tracking-clicks' => track_clicks,
         'o:tracking-opens' => track_opens,
         'o:testmode' => test_mode,
+        'X-Mailgun-Campaign-Id' => campaign_id,
         'recipient-variables' => recipient_variables.to_json,
       }
 
