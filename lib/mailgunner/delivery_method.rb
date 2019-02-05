@@ -2,8 +2,6 @@ require 'mail/check_delivery_params'
 
 module Mailgunner
   class DeliveryMethod
-    include Mail::CheckDeliveryParams
-
     attr_accessor :settings
 
     def initialize(values)
@@ -12,10 +10,24 @@ module Mailgunner
     end
 
     def deliver!(mail)
-      check_delivery_params(mail)
+      check(mail)
 
       message = Message.new(mail)
       @client.send_message(message.to_json)
+    end
+
+    private
+
+    if Mail::CheckDeliveryParams.respond_to?(:check) # mail v2.6.6+
+      def check(mail)
+        Mail::CheckDeliveryParams.check(mail)
+      end
+    else
+      include Mail::CheckDeliveryParams
+
+      def check(mail)
+        check_delivery_params(mail)
+      end
     end
   end
 
