@@ -2,9 +2,10 @@ require 'mail/check_delivery_params'
 
 module Mailgunner
   class DeliveryMethod
-    attr_accessor :client
+    attr_accessor :client, :settings
 
     def initialize(values)
+      @settings = values
       @client = Client.new(values)
     end
 
