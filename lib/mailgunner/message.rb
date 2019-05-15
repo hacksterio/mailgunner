@@ -8,30 +8,6 @@ module Mailgunner
       @mail = mail
     end
 
-    # # Returns a Mandrill API compatible attachment hash
-    # def attachments
-    #   regular_attachments = mail.attachments.reject(&:inline?)
-    #   regular_attachments.collect do |attachment|
-    #     {
-    #       name: attachment.filename,
-    #       type: attachment.mime_type,
-    #       content: Base64.encode64(attachment.body.decoded)
-    #     }
-    #   end
-    # end
-
-    # # Mandrill uses a different hash for inlined image attachments
-    # def images
-    #   inline_attachments = mail.attachments.select(&:inline?)
-    #   inline_attachments.collect do |attachment|
-    #     {
-    #       name: attachment.cid,
-    #       type: attachment.mime_type,
-    #       content: Base64.encode64(attachment.body.decoded)
-    #     }
-    #   end
-    # end
-
     def bcc
       hash_addresses(mail['bcc'])
     end
@@ -42,6 +18,13 @@ module Mailgunner
 
     def cc
       hash_addresses(mail['cc'])
+    end
+
+    # Returns a hash with `h:` prefixed to the keys
+    def custom_headers
+      (get_value(:custom_headers) || {}).each_with_object({}) do |(k, v), mem|
+        mem['h:%s' % k] = v
+      end
     end
 
     # Returns a formatted address
@@ -92,26 +75,25 @@ module Mailgunner
     end
 
     def to_json # rubocop:disable MethodLength, AbcSize
-      json_hash = {
-        from: from,
-        to: to,
-        cc: cc,
+      {
         bcc: bcc,
+        cc: cc,
+        from: from,
+        html: html,
         subject: subject,
         text: text,
-        html: html,
+        to: to,
         'h:Reply-To' => reply_to,
         'o:tag' => tags,
+        'o:testmode' => test_mode,
         'o:tracking-clicks' => track_clicks,
         'o:tracking-opens' => track_opens,
-        'o:testmode' => test_mode,
-        'X-Mailgun-Campaign-Id' => campaign_id,
         'recipient-variables' => recipient_variables.to_json,
-      }
-
-      # json_hash[:attachments] = attachments if attachments?
-      # json_hash[:images] = images if inline_attachments?
-      json_hash
+        'X-Mailgun-Campaign-Id' => campaign_id,
+      }.merge(custom_headers).tap do |json_hash|
+        # json_hash[:attachments] = attachments if attachments?
+        # json_hash[:images] = images if inline_attachments?
+      end
     end
 
   private
