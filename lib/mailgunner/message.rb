@@ -105,9 +105,9 @@ module Mailgunner
 
     # Returns an array of values e.g. merge_vars or gobal_merge_vars
     # `mail[:merge_vars].value` returns the variables pre-processed,
-    # `instance_variable_get('@value')` returns them exactly as they were passed in
+    # `unparsed_value` returns them exactly as they were passed in
     def get_value(field)
-      mail[field] ? mail[field].instance_variable_get('@value') : nil
+      mail[field] ? mail[field].unparsed_value : nil
     end
 
     # Returns a Mailgun API compatible email address
